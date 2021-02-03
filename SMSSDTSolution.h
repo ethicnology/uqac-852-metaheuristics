@@ -64,32 +64,6 @@ public:
 	void setObj(double obj) {
 		FctObj = obj;
 	}
-
-	int getSize() {
-		return (int)Solution.size();
-	}
-
-	void printIt() {
-		int i;
-		cout << "S0 : ";
-		for (i = 0 ; i < Solution.size(); i++) {
-			cout << Solution[i] << " ";
-		}
-		cout << endl << "TT : ";
-
-		for (i = 0; i < TT.size(); i++) {
-			cout << TT[i] << " ";
-		}
-		cout << endl << "CT : ";
-		for (i = 0; i < CT.size(); i++) {
-			cout << CT[i] << " ";
-		}
-		cout << endl << "ST : ";
-		for (i = 0; i < ST.size(); i++) {
-			cout << ST[i] << " ";
-		}
-		cout << endl << "Fitness : " << FctObj << endl;
-	}
 };
 
 
