@@ -142,12 +142,14 @@
     <ClCompile Include="8INF852TP.cpp" />
     <ClCompile Include="SMSSDTProblem.cpp" />
     <ClCompile Include="SMSSDTSolution.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VNS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SMSSDTProblem.h" />
     <ClInclude Include="SMSSDTSolution.h" />
     <ClInclude Include="Tools.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="VNS.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
