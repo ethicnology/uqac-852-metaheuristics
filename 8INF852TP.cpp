@@ -13,6 +13,10 @@ int main(int argc, char* argv[]){
 
 	if (strcmp(argv[3], "vns") == 0) {
 		VNS(atoi(argv[1]), argv[2]);
+	} else if (strcmp(argv[3], "recuit") == 0) {
+		VNS(atoi(argv[1]), argv[2]);
+	} else if (strcmp(argv[3], "tabou") == 0) {
+		VNS(atoi(argv[1]), argv[2]);
 	}
 }
 

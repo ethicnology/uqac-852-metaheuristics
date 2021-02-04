@@ -3,7 +3,7 @@ using namespace std;
 
 void VNS(int Iteration, char *Dataset){
 	clock_t	Start, Current;
-	int StopCriterion = 60, Fitness = 100000, k, kMax = 15;
+	int StopCriterion = 30, Fitness = 100000, k, kMax = 15;
 	SMSSDTProblem *LeProb;	
 	SMSSDTSolution *Solution = NULL;
 
@@ -27,7 +27,7 @@ void VNS(int Iteration, char *Dataset){
 			}
 			else k = 1;
 			Current = clock();
-		} while (StopCriterion != ((double(Current) - double(Start)) / CLOCKS_PER_SEC));
+		} while (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < StopCriterion );
 		StopAndLog(Start, clock(), BestSolution, LeProb->getNomFichier());
 		showLeS(&BestSolution);
 		Fitness = 100000;
