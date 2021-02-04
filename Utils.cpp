@@ -1,7 +1,7 @@
 #include "Utils.h"
 using namespace std;
 
-void OrderedPermute(SMSSDTSolution *s, int cpt) {
+void Permute(SMSSDTSolution *s, int cpt) {
 	int i;
 	for (i = 0; i < cpt; i++) {
 		std::next_permutation(s->Solution.begin(), s->Solution.end());

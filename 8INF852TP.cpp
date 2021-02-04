@@ -7,6 +7,9 @@ int main(int argc, char* argv[]){
 		cout << "ex : 8INF852TP.exe 20 PROB40.txt vns" << endl;
 		return 0;
 	}
+	else {
+		srand(time(NULL));
+	}
 
 	if (strcmp(argv[3], "vns") == 0) {
 		VNS(atoi(argv[1]), argv[2]);
