@@ -1,4 +1,6 @@
 #include "VNS.h"
+#include "DescenteLocale.h"
+#include "RecuitSimule.h"
 
 int main(int argc, char* argv[]){
 	if (argc != 4) {
@@ -11,12 +13,27 @@ int main(int argc, char* argv[]){
 		srand(time(NULL));
 	}
 
-	if (strcmp(argv[3], "vns") == 0) {
-		VNS(atoi(argv[1]), argv[2]);
-	} else if (strcmp(argv[3], "recuit") == 0) {
-		VNS(atoi(argv[1]), argv[2]);
-	} else if (strcmp(argv[3], "tabou") == 0) {
-		VNS(atoi(argv[1]), argv[2]);
+	int iteration = atoi(argv[1]);
+	char* dataset = argv[2];
+	char* algorithme = argv[3];
+	
+	clock_t	Start, Current;
+	int critereArret = 30, Fitness = INT_MAX;
+	SMSSDTProblem* LeProb;
+
+	LeProb = new SMSSDTProblem(dataset);
+
+	if (strcmp(algorithme, "vns") == 0) {
+		VNS(iteration, dataset);
+	} else if (strcmp(algorithme, "recuit") == 0) {
+		RecuitSimule(iteration, LeProb, critereArret, Fitness);
+	} else if (strcmp(algorithme, "tabou") == 0) {
+		VNS(iteration, dataset);
+	} else if (strcmp(algorithme, "descente") == 0) {
+		Descentelocale(iteration, LeProb, critereArret, Fitness);
+	} 
+	else {
+		cout << "Algorithme inconu" << endl;
 	}
 }
 
