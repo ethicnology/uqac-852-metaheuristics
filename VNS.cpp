@@ -22,7 +22,7 @@ void VNS(int Iteration, char *Dataset){
 				Fitness = BestSolution.getObj();
 				k = 0;
 			}
-			else if (k < kMax) {
+			if (k < kMax) {
 				k++;
 			}
 			else k = 1;
