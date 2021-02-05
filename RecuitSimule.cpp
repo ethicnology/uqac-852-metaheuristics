@@ -26,7 +26,6 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fc
 			Tk = g(Tk);
 			k++;
 			Current = clock();
-			cout << "Valeur Fitness : " << Tk <<endl;
 		} while (Tk >= 0.0f && (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < critereArret));
 
 		StopAndLog(Start, clock(), BestSolution, leProb->getNomFichier());

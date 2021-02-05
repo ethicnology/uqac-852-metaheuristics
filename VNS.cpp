@@ -1,35 +1,32 @@
 #include "VNS.h"
 using namespace std;
 
-void VNS(int Iteration, char *Dataset){
-	clock_t	Start, Current;
-	int StopCriterion = 30, Fitness = 100000, k, kMax = 15;
-	SMSSDTProblem *LeProb;	
-	SMSSDTSolution *Solution = NULL;
+void VNS(int iteration, SMSSDTProblem *problem, int shutoff, int fitness){
+	int k = 1, kMax = 15;
+	clock_t	start, current;
+	SMSSDTSolution *solution = NULL;
 
-	LeProb = new SMSSDTProblem(Dataset);
-	Solution = new SMSSDTSolution(LeProb->getN(), true);
-	k = 1;
+	solution = new SMSSDTSolution(problem->getN(), true);
 
-	for (int j = 0; j < Iteration; j++){
-		Start = clock();	
-		SMSSDTSolution	BestSolution(LeProb->getN());
+	for (int j = 0; j < iteration; j++){
+		start = clock();	
+		SMSSDTSolution bestSolution(problem->getN());
 		do {
-			Permute(Solution, k);
-			Tools::Evaluer(LeProb, *Solution);
-			if (Solution->getObj() < Fitness) {
-				BestSolution = *Solution;
-				Fitness = BestSolution.getObj();
+			Permute(solution, k);
+			Tools::Evaluer(problem, *solution);
+			if (solution->getObj() < fitness) {
+				bestSolution = *solution;
+				fitness = (int)bestSolution.getObj();
 				k = 0;
 			}
 			if (k < kMax) {
 				k++;
 			}
 			else k = 1;
-			Current = clock();
-		} while (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < StopCriterion );
-		StopAndLog(Start, clock(), BestSolution, LeProb->getNomFichier());
-		showLeS(&BestSolution);
-		Fitness = 100000;
+			current = clock();
+		} while (((double(current) - double(start)) / CLOCKS_PER_SEC) < shutoff );
+		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
+		showLeS(&bestSolution);
+		fitness = INT_MAX;
 	}
 }
