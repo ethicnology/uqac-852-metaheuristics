@@ -1,6 +1,18 @@
 #include "Utils.h"
 using namespace std;
 
+int Random() {
+	return  rand() % 15;
+}
+
+void FisherYates(SMSSDTSolution *s) {
+	int j;
+	for (int i = 0; i < sizeof(s->Solution)/sizeof(int); i++) {
+		j = Random();
+		swap(s->Solution[j], s->Solution[i]);
+	}
+}
+
 void Permute(SMSSDTSolution *s, int cpt) {
 	int i;
 	for (i = 0; i < cpt; i++) {
@@ -15,6 +27,14 @@ void Swap(SMSSDTSolution *s, int pos1, int pos2) {
 void Inversion(SMSSDTSolution *s, int pos1, int pos2) {
 	for (int low = pos1, high = pos2; low < high; low++, high--) {
 		swap(s->Solution[low], s->Solution[high]);
+	}
+}
+
+void Scramble(SMSSDTSolution* s, int pos1, int pos2) {
+	int j;
+	for (int i = pos1; i < pos2 + 1; i++) {
+		j = rand() % ((pos2 + 1) - pos1) + pos1;
+		swap(s->Solution[j], s->Solution[i]);
 	}
 }
 
