@@ -72,8 +72,6 @@
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Exec.bat">
-      <Filter>Fichiers sources</Filter>
-    </Text>
+    <Text Include="Exec.bat" />
   </ItemGroup>
 </Project>
