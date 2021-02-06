@@ -144,6 +144,7 @@
     <ClCompile Include="RecuitSimule.cpp" />
     <ClCompile Include="SMSSDTProblem.cpp" />
     <ClCompile Include="SMSSDTSolution.cpp" />
+    <ClCompile Include="TabuSearch.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VNS.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="RecuitSimule.h" />
     <ClInclude Include="SMSSDTProblem.h" />
     <ClInclude Include="SMSSDTSolution.h" />
+    <ClInclude Include="TabuSearch.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VNS.h" />

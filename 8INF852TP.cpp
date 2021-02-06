@@ -1,4 +1,5 @@
 #include "VNS.h"
+#include "TabuSearch.h"
 #include "DescenteLocale.h"
 #include "RecuitSimule.h"
 
@@ -22,7 +23,7 @@ int main(int argc, char* argv[]){
 	if (strcmp(algorithm, "VNS") == 0) {
 		VNS(iteration, problem, shutoff, fitness);
 	} else if (strcmp(algorithm, "TabuSearch") == 0) {
-		//TODO
+		TabuSearch(iteration, problem, shutoff, fitness);
 	}
 	else if (strcmp(algorithm, "SimulatedAnnealing") == 0) {
 		RecuitSimule(iteration, problem, shutoff, fitness);
