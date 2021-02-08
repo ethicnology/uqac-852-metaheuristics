@@ -11,7 +11,7 @@ int checkTabus(deque<vector<int>> tabuList, vector<int> neighbour) {
 void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness) {
 	int tabuSizeMax = 20;
 	clock_t	start, current;
-	SMSSDTSolution *solution = NULL;
+	SMSSDTSolution* solution = NULL, shaked = NULL;
 	deque<vector<int>> tabuList;
 
 	tabuList.resize(tabuSizeMax);
@@ -21,8 +21,9 @@ void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness)
 		start = clock();
 		SMSSDTSolution bestSolution(problem->getN());
 		do {
-			FisherYates(solution);
-			if (checkTabus(tabuList, solution->Solution) == 0) {
+			shaked = Shaking(problem, *solution);
+			if (checkTabus(tabuList, shaked.Solution) == 0) {
+				*solution = shaked;
 				Tools::Evaluer(problem, *solution);
 				if (tabuList.size() == tabuSizeMax) {
 					tabuList.pop_front();

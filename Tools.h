@@ -117,9 +117,8 @@ class Tools
 			_strtime_s(Time, sizeof(Date));
 			Streamf << Date << " " << Time;
 
-			Streamf << " ";
 			BestSolution.Save(Streamf);
-			Streamf << " " << BestSolution.getObj() << " " << Elapsed << "\n";
+			Streamf << BestSolution.getObj() << " " << Elapsed << "\n";
 			Streamf.clear();
 			Streamf.close();
 			time_t rawtime;

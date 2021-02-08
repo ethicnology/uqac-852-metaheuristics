@@ -163,9 +163,6 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="Exec.bat" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
