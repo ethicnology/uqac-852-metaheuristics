@@ -3,12 +3,13 @@
 void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fctObjectif)
 {
 	clock_t	Start, Current;
-	SMSSDTSolution* Solution = new SMSSDTSolution(leProb->getN(), true);
+	SMSSDTSolution* Solution = new SMSSDTSolution(leProb->getN(), true), shaked = NULL;
 
-	double Tinitial = 50.0f;
+	double Tinitial = 100.0f;
 	double Tk = Tinitial;
 	int k = 1;
 	double condition = 1;
+	int i=0;
 
 	for (int j = 0; j < iteration; j++) {
 		Start = clock();
@@ -16,22 +17,20 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fc
 		SMSSDTSolution	BestSolution(leProb->getN());
 
 		do {
-			Permute(Solution, 1);
+			shaked = Shaking(leProb, *Solution);
 			Tools::Evaluer(leProb, *Solution);
 			int r = rand();
 
-			if (r < p(Tk, (double) fctObjectif, (double) Solution->getObj())) {
-				BestSolution = *Solution;
+			if (r < p(Tk, (double) fctObjectif, (double) shaked.getObj())) {
+				BestSolution = shaked;
 				fctObjectif = BestSolution.getObj();
+				cout << "MA MEILLEURE FONCTION " << fctObjectif << endl;
 			}
 
-			if (k >= 20000 && k >= condition) {
-				cout << "je passe dedans " << k << endl;
-				cout << "température " << Tk << endl;
-				cout << "fctobjectif " << fctObjectif << endl;
-				cout << "============= " << endl;
+			if (k >= 5000 && k >= condition) {
+				cout << "je passe dedans " << Tk << endl;
 				Tk = g(Tk);
-				condition = k * 1.1;
+				condition = k * 1.05;
 			}
 			k++;
 			
@@ -39,6 +38,7 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fc
 			Current = clock();
 		} while (Tk >= 0.0f && (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < critereArret));
 
+		cout << "MON " << i << endl;
 		StopAndLog(Start, clock(), BestSolution, leProb->getNomFichier());
 		showLeS(&BestSolution);
 		fctObjectif = INT_MAX;
@@ -54,7 +54,14 @@ double p(double Tk, double solutionCourante, double solutionVoisine)
 
 double g(double Tk)
 {
-	double alpha = 0.90;
+	double alpha = 0.95;
+	if (Tk > 15) {
+		alpha = 0.95;
+	}
+	else {
+		alpha = 0.70;
+	}
+	
 	return Tk * alpha;
 }
 
