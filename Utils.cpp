@@ -24,8 +24,6 @@ SMSSDTSolution Shaking(SMSSDTProblem *problem, SMSSDTSolution s){
 	best = minS(problem, &best, &s2);
 	best = minS(problem, &best, &s3);
 
-	cout << "FisherYates : " << s0.getObj() << " winner " << best.getObj() << endl;
-
 	return best;
 }
 
