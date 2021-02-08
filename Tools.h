@@ -102,6 +102,27 @@ class Tools
 			Streamf.close();
 			time_t rawtime;
 			time(&rawtime);
+
+			WriteResultsToCSV(Elapsed, BestSolution, ProblemName);
+		}
+
+		static void WriteResultsToCSV(double Elapsed, SMSSDTSolution BestSolution, char* ProblemName) {
+			char Date[9];
+			char Time[9];
+
+			string FileName = "Results/Report_" + string(ProblemName) + ".csv";
+			fstream Streamf(FileName, ios::out | ios::app);
+
+			_strdate_s(Date, sizeof(Date));
+			_strtime_s(Time, sizeof(Date));
+			Streamf << Date << " " << Time;
+
+			BestSolution.Save(Streamf);
+			Streamf << BestSolution.getObj() << " " << Elapsed << "\n";
+			Streamf.clear();
+			Streamf.close();
+			time_t rawtime;
+			time(&rawtime);
 		}
 
 };
