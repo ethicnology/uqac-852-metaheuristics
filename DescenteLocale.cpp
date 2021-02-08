@@ -1,6 +1,6 @@
 #include "DescenteLocale.h"
 
-void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int fctObjectif)
+void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int fitness)
 {
 	clock_t	Start, Current;
 	SMSSDTSolution* Solution = new SMSSDTSolution(leProb->getN(), true);
@@ -10,17 +10,17 @@ void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int 
 		SMSSDTSolution	BestSolution(leProb->getN());
 
 		do {
-			Permute(Solution, 1);
+			*Solution = Shaking(leProb, *Solution);
 			Tools::Evaluer(leProb, *Solution);
-			if (Solution->getObj() < fctObjectif) {
+			if (Solution->getObj() < fitness) {
 				BestSolution = *Solution;
-				fctObjectif = BestSolution.getObj();
+				fitness = BestSolution.getObj();
 			}
 			Current = clock();
 		} while (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < critereArret);
 
 		StopAndLog(Start, clock(), BestSolution, leProb->getNomFichier());
 		showLeS(&BestSolution);
-		fctObjectif = INT_MAX;
+		fitness = INT_MAX;
 	}
 }

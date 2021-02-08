@@ -1,6 +1,6 @@
 #include "RecuitSimule.h"
 
-void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fctObjectif)
+void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fitness)
 {
 	clock_t	Start, Current;
 	SMSSDTSolution* Solution = new SMSSDTSolution(leProb->getN(), true), shaked = NULL;
@@ -18,17 +18,15 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fc
 
 		do {
 			shaked = Shaking(leProb, *Solution);
-			Tools::Evaluer(leProb, *Solution);
+			Tools::Evaluer(leProb, shaked);
 			int r = rand();
 
-			if (r < p(Tk, (double) fctObjectif, (double) shaked.getObj())) {
+			if (r < p(Tk, (double) fitness, (double) shaked.getObj())) {
 				BestSolution = shaked;
-				fctObjectif = BestSolution.getObj();
-				cout << "MA MEILLEURE FONCTION " << fctObjectif << endl;
+				fitness = BestSolution.getObj();
 			}
 
 			if (k >= 5000 && k >= condition) {
-				cout << "je passe dedans " << Tk << endl;
 				Tk = g(Tk);
 				condition = k * 1.05;
 			}
@@ -38,10 +36,9 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fc
 			Current = clock();
 		} while (Tk >= 0.0f && (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < critereArret));
 
-		cout << "MON " << i << endl;
 		StopAndLog(Start, clock(), BestSolution, leProb->getNomFichier());
 		showLeS(&BestSolution);
-		fctObjectif = INT_MAX;
+		fitness = INT_MAX;
 	}
 }
 
