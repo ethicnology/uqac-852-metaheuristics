@@ -1,14 +1,14 @@
 #include "Utils.h"
 using namespace std;
 
-int Random() {
-	return  rand() % 15;
+int Random(int n) {
+	return  rand() % n;
 }
 
 SMSSDTSolution Shaking(SMSSDTProblem *problem, SMSSDTSolution s){
 	SMSSDTSolution s0 = NULL, s1 = NULL, s2 = NULL, s3 = NULL, best = NULL;
 
-	int a = Random(), b = Random(), tmp;
+	int a = Random(problem->getN()), b = Random(problem->getN()), tmp;
 	if (a > b) {
 		tmp = a;
 		a = b;
@@ -29,8 +29,8 @@ SMSSDTSolution Shaking(SMSSDTProblem *problem, SMSSDTSolution s){
 
 SMSSDTSolution FisherYates(SMSSDTSolution s) {
 	int j;
-	for (int i = 0; i < sizeof(s.Solution)/sizeof(int); i++) {
-		j = Random();
+	for (int i = 0; i < s.Solution.size(); i++) {
+		j = Random(s.Solution.size());
 		swap(s.Solution[j], s.Solution[i]);
 	}
 	return s;

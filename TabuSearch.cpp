@@ -9,7 +9,7 @@ int checkTabus(deque<vector<int>> tabuList, vector<int> neighbour) {
 }
 
 void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness) {
-	int tabuSizeMax = 20;
+	int tabuSizeMax = problem->getN();
 	clock_t	start, current;
 	SMSSDTSolution* solution = NULL, shaked = NULL;
 	deque<vector<int>> tabuList;

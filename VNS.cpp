@@ -2,7 +2,7 @@
 using namespace std;
 
 void VNS(int iteration, SMSSDTProblem *problem, int shutoff, int fitness){
-	int k = 1, kMax = 15;
+	int k = 1, kMax = problem->getN();
 	clock_t	start, current;
 	SMSSDTSolution *solution = NULL;
 
