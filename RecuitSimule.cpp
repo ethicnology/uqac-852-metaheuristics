@@ -9,7 +9,6 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 	double Tk = Tinitial;
 	int k = 1;
 	double condition = 1;
-	int i=0;
 
 	for (int j = 0; j < iteration; j++) {
 		Start = clock();
@@ -19,7 +18,7 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 		do {
 			shaked = Shaking(leProb, *Solution);
 			Tools::Evaluer(leProb, shaked);
-			int r = rand();
+			double  r = (((double)rand() / ((double)RAND_MAX + 1.0)) * (1 - 0));
 
 			if (r < p(Tk, (double) fitness, (double) shaked.getObj())) {
 				BestSolution = shaked;
