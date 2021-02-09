@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
 		srand((int)time(NULL));
 	}
 
-	int iteration = atoi(argv[1]), shutoff = 30, fitness = INT_MAX;
+	int iteration = atoi(argv[1]), shutoff = 15, fitness = INT_MAX;
 	char *dataset = argv[2], *algorithm = argv[3];
 
 	SMSSDTProblem* problem;
