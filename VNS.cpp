@@ -2,7 +2,7 @@
 using namespace std;
 
 void VNS(int iteration, SMSSDTProblem *problem, int shutoff, int fitness){
-	int k = 1, kMax = problem->getN();
+	int k = 1, kMax = 4;
 	clock_t	start, current;
 	SMSSDTSolution *solution = NULL;
 
@@ -12,7 +12,7 @@ void VNS(int iteration, SMSSDTProblem *problem, int shutoff, int fitness){
 		start = clock();	
 		SMSSDTSolution bestSolution(problem->getN());
 		do {
-			Permute(solution, k);
+			Shaking(problem, *solution, k);
 			Tools::Evaluer(problem, *solution);
 			if (solution->getObj() < fitness) {
 				bestSolution = *solution;

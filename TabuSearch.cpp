@@ -21,7 +21,7 @@ void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness)
 		start = clock();
 		SMSSDTSolution bestSolution(problem->getN());
 		do {
-			shaked = Shaking(problem, *solution);
+			shaked = Shaking(problem, *solution, 0);
 			if (checkTabus(tabuList, shaked.Solution) == 0) {
 				*solution = shaked;
 				Tools::Evaluer(problem, *solution);

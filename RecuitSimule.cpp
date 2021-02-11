@@ -16,7 +16,7 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 		SMSSDTSolution	BestSolution(leProb->getN());
 
 		do {
-			shaked = Shaking(leProb, *Solution);
+			shaked = Shaking(leProb, *Solution, 0);
 			Tools::Evaluer(leProb, shaked);
 			double  r = (((double)rand() / ((double)RAND_MAX + 1.0)) * (1 - 0));
 

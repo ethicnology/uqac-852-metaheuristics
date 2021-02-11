@@ -5,7 +5,7 @@ int Random(int n) {
 	return  rand() % n;
 }
 
-SMSSDTSolution Shaking(SMSSDTProblem *problem, SMSSDTSolution s){
+SMSSDTSolution Shaking(SMSSDTProblem *problem, SMSSDTSolution s, int operation){
 	SMSSDTSolution s0 = NULL, s1 = NULL, s2 = NULL, s3 = NULL, best = NULL;
 
 	int a = Random(problem->getN()), b = Random(problem->getN()), tmp;
@@ -15,14 +15,29 @@ SMSSDTSolution Shaking(SMSSDTProblem *problem, SMSSDTSolution s){
 		b = tmp;
 	}
 
-	s0 = FisherYates(s);
-	s1 = Swap(s, a, b);
-	s2 = Inversion(s, a, b);
-	s3 = Scramble(s, a, b);
-
-	best = minS(problem, &s0, &s1);
-	best = minS(problem, &best, &s2);
-	best = minS(problem, &best, &s3);
+	switch (operation) {
+	case 1:
+		best = Swap(s, a, b);
+		break;
+	case 2:
+		best = Inversion(s, a, b);
+		break;
+	case 3:
+		best = Scramble(s, a, b);
+		break;
+	case 4:
+		best = FisherYates(s);
+		break;
+	default:
+		s0 = Swap(s, a, b);
+		s1 = Inversion(s, a, b);
+		s2 = Scramble(s, a, b);
+		s3 = FisherYates(s);
+		best = minS(problem, &s0, &s1);
+		best = minS(problem, &best, &s2);
+		best = minS(problem, &best, &s3);
+		break;
+	}
 
 	return best;
 }

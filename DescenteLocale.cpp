@@ -10,7 +10,7 @@ void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int 
 		SMSSDTSolution	BestSolution(leProb->getN());
 
 		do {
-			*Solution = Shaking(leProb, *Solution);
+			*Solution = Shaking(leProb, *Solution, 0);
 			Tools::Evaluer(leProb, *Solution);
 			if (Solution->getObj() < fitness) {
 				BestSolution = *Solution;

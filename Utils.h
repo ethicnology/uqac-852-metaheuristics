@@ -1,6 +1,6 @@
 #include "Tools.h"
 int Random(int n);
-SMSSDTSolution Shaking(SMSSDTProblem* problem, SMSSDTSolution s);
+SMSSDTSolution Shaking(SMSSDTProblem* problem, SMSSDTSolution s, int operation);
 SMSSDTSolution FisherYates(SMSSDTSolution s);
 void Permute(SMSSDTSolution *s, int cpt);
 SMSSDTSolution Swap(SMSSDTSolution s, int pos1, int pos2);
