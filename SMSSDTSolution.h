@@ -38,6 +38,7 @@ public:
 	 * Constructeur de la classe
 	 * Assigne les valeurs aléatoires initiales à la solution
 	**/
+	SMSSDTSolution();
 	SMSSDTSolution(int N, bool test);
 
 	

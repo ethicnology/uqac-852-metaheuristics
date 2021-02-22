@@ -15,6 +15,9 @@ using namespace std;
  * Assigne les valeurs aléatoires initiales à la solution
 **/
 
+SMSSDTSolution::SMSSDTSolution() {
+}
+
 SMSSDTSolution::SMSSDTSolution(int N, bool test) {
 	// scheduling vector
 	Solution.resize(N);
