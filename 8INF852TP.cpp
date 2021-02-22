@@ -2,6 +2,7 @@
 #include "TabuSearch.h"
 #include "DescenteLocale.h"
 #include "RecuitSimule.h"
+#include "RandomGenetics.h"
 
 int main(int argc, char* argv[]){
 	if (argc != 4) {
@@ -30,7 +31,10 @@ int main(int argc, char* argv[]){
 	}	
 	else if (strcmp(algorithm, "LocalDescent") == 0) {
 		Descentelocale(iteration, problem, shutoff, fitness);
-	} 
+	}
+	else if (strcmp(algorithm, "RandomGenetics") == 0) {
+		RandomGenetics(iteration, problem, shutoff, fitness);
+	}
 	else {
 		cout << "Unknown algorithm" << endl;
 	}
