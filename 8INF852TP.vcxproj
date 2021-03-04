@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="8INF852TP.cpp" />
     <ClCompile Include="DescenteLocale.cpp" />
+    <ClCompile Include="GeneticsUtils.cpp" />
     <ClCompile Include="RandomGenetics.cpp" />
     <ClCompile Include="RecuitSimule.cpp" />
     <ClCompile Include="SMSSDTProblem.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DescenteLocale.h" />
+    <ClInclude Include="GeneticsUtils.h" />
     <ClInclude Include="RandomGenetics.h" />
     <ClInclude Include="RecuitSimule.h" />
     <ClInclude Include="SMSSDTProblem.h" />

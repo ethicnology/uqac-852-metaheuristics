@@ -1,8 +1,7 @@
 #include "Tools.h"
 #include "Utils.h"
-#include <vector>
+#include "GeneticsUtils.h"
 void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness);
-deque<SMSSDTSolution> InitializeRandomPopulation(SMSSDTProblem* problem, int size);
 double GetInverseTotalTardinessPopulation(deque<SMSSDTSolution> population);
 SMSSDTSolution GetIndividuProportionnelle(deque<SMSSDTSolution> population, double totalInverseTardiness);
 void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SMSSDTSolution> oldPopulation, deque<SMSSDTSolution>* newPopulation, SMSSDTProblem* problem);
