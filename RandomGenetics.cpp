@@ -18,6 +18,7 @@ deque<SMSSDTSolution> InitializeRandomPopulation(SMSSDTProblem* problem, int siz
 
 void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 {
+	clock_t	start, current;
 	int populationMax = 50;
 
 	deque<SMSSDTSolution> population;
@@ -43,7 +44,7 @@ void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitn
 	showLeS(&bestSolution);
 
 	for (int i = 0; i < iteration; i++) {
-
+		start = clock();
 		while (generation < nombreDeGeneration) {
 			double totalInverseTardiness = GetInverseTotalTardinessPopulation(population);
 			deque<SMSSDTSolution> newPopulation = population;
@@ -73,7 +74,7 @@ void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitn
 			bestSolution = GetBestSolution(population);
 			showLeS(&bestSolution);*/
 		}
-		
+		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
 	}
 	cout << "================================================" << endl;
 	cout << "==== Meilleur individu APRES algo genetique ====" << endl;
