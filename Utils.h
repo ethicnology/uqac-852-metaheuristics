@@ -9,3 +9,4 @@ SMSSDTSolution Scramble(SMSSDTSolution s, int pos1, int pos2);
 SMSSDTSolution minS(SMSSDTProblem* problem, SMSSDTSolution* s0, SMSSDTSolution* s1);
 void StopAndLog(double Start, double Stop, SMSSDTSolution BestSolution, char *ReportFile);
 void showLeS(SMSSDTSolution *s);
+double RandomValue(double min, double max);

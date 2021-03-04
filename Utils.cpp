@@ -97,7 +97,7 @@ void StopAndLog(double Start, double Stop, SMSSDTSolution BestSolution, char *Re
 
 void showLeS(SMSSDTSolution* s) {
 	int i;
-	cout << "S0 : ";
+	cout << "SOLUTION : ";
 	for (i = 0; i < s->Solution.size(); i++) {
 		cout << s->Solution[i] << " ";
 	}
@@ -114,4 +114,11 @@ void showLeS(SMSSDTSolution* s) {
 		cout << s->ST[i] << " ";
 	}
 	cout << endl << "Fitness : " << s->getObj() << endl;
+}
+
+
+double RandomValue(double min, double max) //Pass in range
+{
+	double f = (double)rand() / RAND_MAX;
+	return min + f * (max - min);
 }
