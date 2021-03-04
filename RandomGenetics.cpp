@@ -12,22 +12,28 @@ deque<SMSSDTSolution> InitializeRandomPopulation(SMSSDTProblem* problem, int siz
 	return population;
 }
 
+
+
+
+
 void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 {
-	int populationMax = 20;
+	int populationMax = 50;
 
 	deque<SMSSDTSolution> population;
 	SMSSDTSolution firstParent = NULL;
 	SMSSDTSolution secondParent = NULL;
 	SMSSDTSolution bestSolution = NULL;
 	double alpha = 0.1;
-	int nombreDeGeneration = 30;
+	int nombreDeGeneration = 50;
 	int generation = 0;
+
+	int numberChildren = 2*populationMax;
 
 
 	if (populationMax < 2) {
 		cout << "Erreur population trop petite";
-		exit;
+		return;
 	}
 
 	population = InitializeRandomPopulation(problem, populationMax);
@@ -40,31 +46,38 @@ void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitn
 
 		while (generation < nombreDeGeneration) {
 			double totalInverseTardiness = GetInverseTotalTardinessPopulation(population);
+			deque<SMSSDTSolution> newPopulation = population;
 
-			//Sélection des parents
-			do {
-				firstParent = GetIndividuProportionnelle(population, totalInverseTardiness);
-				secondParent = GetIndividuProportionnelle(population, totalInverseTardiness);
-			} while (firstParent.Solution == secondParent.Solution);
+			for (int j = 0; j < numberChildren; j += 2) {
+				//Sélection des parents
+				do {
+					firstParent = GetIndividuProportionnelle(population, totalInverseTardiness);
+					secondParent = GetIndividuProportionnelle(population, totalInverseTardiness);
+				} while (firstParent.Solution == secondParent.Solution);
 
-			//Croisement pour créer les enfants
-			Crossover(firstParent, secondParent, &population, problem);
+				//Croisement pour créer les enfants
+				Crossover(firstParent, secondParent, population, &newPopulation, problem);
+			}		
 
 			//mutation potentielle des enfants
-			Mutation(&population[population.size() - 1], alpha, problem);
-			Mutation(&population[population.size() - 2], alpha, problem);
+			newPopulation = Mutation(newPopulation, alpha, problem, populationMax);
 
 			//selection nouvelle population
-			totalInverseTardiness = GetInverseTotalTardinessPopulation(population);
-			population = NextGeneration(population, totalInverseTardiness, populationMax);
+			totalInverseTardiness = GetInverseTotalTardinessPopulation(newPopulation);
+			population = NextGeneration(newPopulation, totalInverseTardiness, populationMax);
 			generation++;
 			cout << "generation  : " << generation << endl;
+
+			/*cout << "================================================" << endl;
+			cout << "==== Meilleur individu GENERATION " << generation << " ====" << endl;
+			bestSolution = GetBestSolution(population);
+			showLeS(&bestSolution);*/
 		}
 		
 	}
 	cout << "================================================" << endl;
 	cout << "==== Meilleur individu APRES algo genetique ====" << endl;
-	bestSolution = GetBestSolution(population);	
+	bestSolution = GetBestSolution(population);
 	showLeS(&bestSolution);
 }
 
@@ -88,13 +101,13 @@ deque<SMSSDTSolution> NextGeneration(deque<SMSSDTSolution> population, double to
 	return newPopulation;
 }
 
-void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SMSSDTSolution> *population, SMSSDTProblem* problem) 
+void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SMSSDTSolution> oldPopulation, deque<SMSSDTSolution> *newPopulation, SMSSDTProblem* problem)
 {
 	int minCrossover = 3;
 	int maxCrossover = firstParent.Solution.size() - 3;
 	int randCrossoverPoint = (int) RandomValue(minCrossover, maxCrossover);
 
-	/*cout << "firstParent.Solution.size() " << firstParent.Solution.size() << endl;
+	/*cout << endl << "firstParent.Solution.size() " << firstParent.Solution.size() << endl;
 	cout << "CrossOverPoint " << randCrossoverPoint << endl;*/
 
 	SMSSDTSolution firstChild = firstParent;
@@ -104,18 +117,39 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 	int j = 0;
 	int k = 0;
 	do {
-		if (firstChild.notIn(secondParent.Solution[j], randCrossoverPoint)) {
-			firstChild.Solution[i] = secondParent.Solution[j];
-			i++;
-		}
+		if (j == firstParent.Solution.size()) {
+			cout << "======= -------- ====="<< endl;
+			cout << "ERREUR CROISEMENT" << endl;
+			cout << "Valeur de j " << j << endl;
+			cout << "Valeur de i " << i << endl;
+			cout << "Valeur de k " << k << endl;
+			cout << "Crossover point " << randCrossoverPoint << endl;
+			/*showLeS(&firstParent);
+			showLeS(&secondParent);
+			cout << "=========================" << endl;
 
-		if (secondChild.notIn(firstParent.Solution[j], randCrossoverPoint)) {
-			secondChild.Solution[k] = firstParent.Solution[j];
-			k++;
-		}
+			showLeS(&firstChild);
+			cout << "=========================" << endl;
 
-		j++;
-	} while (j < secondChild.Solution.size() || (i < randCrossoverPoint && k < randCrossoverPoint));
+			showLeS(&secondChild);
+			cout << "=========================" << endl;*/
+			return;
+		} else { 
+			if (firstChild.notIn(secondParent.Solution[j], randCrossoverPoint, i) && i < randCrossoverPoint) {
+				firstChild.Solution[i] = secondParent.Solution[j];
+				i++;
+			}
+
+			if (secondChild.notIn(firstParent.Solution[j], randCrossoverPoint, k) && k < randCrossoverPoint) {
+				secondChild.Solution[k] = firstParent.Solution[j];
+				k++;
+			}
+		}	
+
+		j++;		
+	} while (i < randCrossoverPoint || k < randCrossoverPoint);
+
+
 	Tools::Evaluer(problem, firstChild);
 	Tools::Evaluer(problem, secondChild);
 	/*cout << " ================================== " << endl;
@@ -130,8 +164,8 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 	cout << " ======== Enfant 2 ======== " << endl;
 	showLeS(&secondChild);*/
 
-	population->push_back(firstChild);
-	population->push_back(secondChild);
+	newPopulation->push_back(firstChild);
+	newPopulation->push_back(secondChild);
 }
 
 
@@ -145,13 +179,17 @@ double GetInverseTotalTardinessPopulation(deque<SMSSDTSolution> population) {
 	return totalTardiness;
 }
 
-void Mutation(SMSSDTSolution* individu, double alpha, SMSSDTProblem* problem) {
-	double rand = RandomValue(0, 1);
-	//showLeS(individu);
-	if (rand < alpha) {
-		*individu = Swap(*individu, (int)RandomValue(0, individu->Solution.size() - 1), RandomValue(0, individu->Solution.size() - 1));
-		Tools::Evaluer(problem, *individu);
+deque<SMSSDTSolution> Mutation(deque<SMSSDTSolution> population, double alpha, SMSSDTProblem* problem, int maxPopulation) {
+	deque<SMSSDTSolution> temp = population;
+	for (int i = maxPopulation-1; i < population.size(); i++) {
+		double rand = RandomValue(0, 1);
+		if (rand < alpha) {
+			temp[i] = Swap(temp[i], (int)RandomValue(0, temp[i].Solution.size() - 1), RandomValue(0, temp[i].Solution.size() - 1));
+			Tools::Evaluer(problem, temp[i]);
+		}
 	}
+
+	return temp;
 }
 
 SMSSDTSolution GetIndividuProportionnelle(deque<SMSSDTSolution> population, double totalInverseTardiness) {

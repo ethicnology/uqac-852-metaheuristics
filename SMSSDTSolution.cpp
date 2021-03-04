@@ -62,8 +62,16 @@ SMSSDTSolution::~SMSSDTSolution() {
 }
 
 
-bool SMSSDTSolution::notIn(int taskNumber, int crossover) {
+bool SMSSDTSolution::notIn(int taskNumber, int crossover, int index) {
 	bool temp = true;
+
+	/*for (int i = index; i > 0; i--) {
+		if (Solution[i] == taskNumber) {
+			temp = false;
+			break;
+		}
+	}*/
+
 	for (int i = crossover; i < (int)Solution.size(); i++) {
 		if (Solution[i] == taskNumber) {
 			temp = false;

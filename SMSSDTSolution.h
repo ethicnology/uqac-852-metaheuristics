@@ -54,7 +54,7 @@ public:
 	ostream& Save(ostream& Stream);
 
 
-	bool notIn(int taskNumber, int crossover);
+	bool notIn(int taskNumber, int crossover, int index);
 
 	
 	/**  definition des accesseurs **/
