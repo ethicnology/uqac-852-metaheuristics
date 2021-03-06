@@ -14,9 +14,9 @@ deque<SMSSDTSolution> InitializeRandomPlebe(SMSSDTProblem* problem, int size) {
 deque<SMSSDTSolution> InitializeSemiRandomPlebe(SMSSDTProblem *problem, int size) {
 	deque<SMSSDTSolution> population;
 	population = InitializeRandomPlebe(problem, size);
-	SortPopulation(&population);
-	for (int i = population.size() / 2; i < population.size(); i++) {
-		LocalDescent(problem, &population[i], 1);
+	/*SortPopulation(&population);*/
+	for (int i = 0; i < population.size()/2; i++) {
+		LocalDescent(problem, &population[i], 5);
 	}
 	return population;
 }
@@ -37,18 +37,18 @@ void SortPopulation(deque<SMSSDTSolution> *population) {
 
 void LocalDescent(SMSSDTProblem* problem, SMSSDTSolution* solution, int shutoff) {
 	int fitness = INT_MAX;
-	clock_t	start, current;
 	SMSSDTSolution	s0 = *solution;
-	start = clock();
+	int stuck = 0;
 	do {
 		s0 = Shaking(problem, *solution, 0);
 		Tools::Evaluer(problem, s0);
 		if (s0.getObj() < solution->getObj()) {
 			*solution = s0;
 			fitness = solution->getObj();
+			stuck = 0;
 		}
-		current = clock();
-	} while (((double(current) - double(start)) / CLOCKS_PER_SEC) < shutoff);
+		stuck++;
+	} while (stuck <= shutoff);
 }
 
 

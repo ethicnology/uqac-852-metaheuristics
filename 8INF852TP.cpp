@@ -2,7 +2,7 @@
 #include "TabuSearch.h"
 #include "DescenteLocale.h"
 #include "RecuitSimule.h"
-#include "RandomGenetics.h"
+#include "Genetics.h"
 #include "GeneticsUtils.h"
 
 int main(int argc, char* argv[]){
@@ -24,7 +24,8 @@ int main(int argc, char* argv[]){
 
 	if (strcmp(algorithm, "VNS") == 0) {
 		VNS(iteration, problem, shutoff, fitness);
-	} else if (strcmp(algorithm, "TabuSearch") == 0) {
+	} 
+	else if (strcmp(algorithm, "TabuSearch") == 0) {
 		TabuSearch(iteration, problem, shutoff, fitness);
 	}
 	else if (strcmp(algorithm, "SimulatedAnnealing") == 0) {
@@ -34,7 +35,13 @@ int main(int argc, char* argv[]){
 		Descentelocale(iteration, problem, shutoff, fitness);
 	}
 	else if (strcmp(algorithm, "RandomGenetics") == 0) {
-		RandomGenetics(iteration, problem, shutoff, fitness);
+		Genetics(iteration, problem, shutoff, fitness, "random");
+	} 
+	else if (strcmp(algorithm, "SemiRandomGenetics") == 0) {
+		Genetics(iteration, problem, shutoff, fitness, "semiRandom");
+	} 
+	else if (strcmp(algorithm, "Memetique") == 0) {
+		Genetics(iteration, problem, shutoff, fitness, "memetique");
 	}
 	else if (strcmp(algorithm, "TestUtils") == 0) {
 		TestUtils(iteration, problem, shutoff, fitness);

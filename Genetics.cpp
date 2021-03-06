@@ -1,69 +1,108 @@
-#include "RandomGenetics.h"
+#include "Genetics.h"
 
-void RandomGenetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
+void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, string typePopulation) 
 {
-	clock_t	start, current;
-	int populationMax = 50;
 
-	deque<SMSSDTSolution> population;
-	SMSSDTSolution firstParent = NULL;
-	SMSSDTSolution secondParent = NULL;
-	SMSSDTSolution bestSolution = NULL;
-	double alpha = 0.1;
-	int nombreDeGeneration = 50;
-	int generation = 0;
+	/* Variables pour l'algorithme */
+	clock_t	start, current;				//Temps d'éxécutions d'une instance
+	
 
-	int numberChildren = 2*populationMax;
+	deque<SMSSDTSolution> population;	//Notre population
+	SMSSDTSolution firstParent = NULL;	//Inidividu parent
+	SMSSDTSolution secondParent = NULL; //Inidividu parent
+	SMSSDTSolution bestSolution = NULL; //Meilleur inidividu d'une population
 
+	int populationSize = 50;				//Taille de la population sur laquelle nous travaillons	
+	int nombreDeGeneration = 10;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
+	int generation = 0;						//Génération initiale
 
-	if (populationMax < 2) {
+	int numberChildren = 2*populationSize; //Nombre d'enfant à chaque génération
+	double alpha = 0.1;					   //Probabilité qu'un enfant subisse une mutation
+	double alphaMem = 1.0;			       //Probabilité de faire une descente locale sur un enfant dans algo mémétique
+	/* ================================ */
+
+	//L'algorithme nécessite une population d'au moins 2 individus
+	if (populationSize < 2) {
 		cout << "Erreur population trop petite";
 		return;
 	}
 
-	population = InitializeRandomPlebe(problem, populationMax);
-
+	//Selon les paramètres d'entrées la population de base est complètement aléatoire ou semi aléatoire
+	if (typePopulation.compare("semiRandom") == 0 || typePopulation.compare("memetiqueSR") == 0) {
+		cout << "On passe SemiRandom" << endl;
+		population = InitializeSemiRandomPlebe(problem, populationSize);
+		cout << "On a fini SemiRandom" << endl;
+	} else {
+		cout << "On passe Random" << endl;
+		population = InitializeRandomPlebe(problem, populationSize);
+	}
+	
+	//Affichage de notre meilleur individu initiallement
 	cout << "==== Meilleur individu avant algo genetique ====" << endl;
 	bestSolution = GetBestSolution(population);
 	showLeS(&bestSolution);
 
+	//Une itération est une exécution complète de l'algorithme
 	for (int i = 0; i < iteration; i++) {
-		start = clock();
-		while (generation < nombreDeGeneration) {
-			double totalInverseTardiness = GetInverseTotalTardinessPopulation(population);
-			deque<SMSSDTSolution> newPopulation = population;
+		start = clock(); //Démarage du chronomètre
 
-			for (int j = 0; j < numberChildren; j += 2) {
-				//Sélection des parents
-				do {
+		//Tant que le critère d'arrêt n'est pas satisfait
+		while (generation < nombreDeGeneration) {
+			//Récupération de l'inverse de l'ensemble des fonctions objectives de la population
+			double totalInverseTardiness = GetInverseTotalTardinessPopulation(population); //Renvois -1 si un individus == 0;
+
+			//Si -1 alors on a un individus optimal dans la population initiale, pas besoin d'exécuter l'algorithme
+			if (totalInverseTardiness == -1) {
+				cout << "BREAK DEPUIS POP INITIALE" << endl;
+				bestSolution = GetBestSolution(population);
+				showLeS(&bestSolution);
+				break;
+			}
+			
+			deque<SMSSDTSolution> newPopulation = population; //Stockage temporaire de la nouvelle population avant la sélection finale
+
+			//Croisement des parents pour former des enfants, chaque couple donne 2 enfants (j +=2)
+			for (int j = 0; j < numberChildren; j += 2) {				
+				do { //Sélection proportionnelle des parents
 					firstParent = GetIndividuProportionnelle(population, totalInverseTardiness);
 					secondParent = GetIndividuProportionnelle(population, totalInverseTardiness);
-				} while (firstParent.Solution == secondParent.Solution);
+				} while (firstParent.Solution == secondParent.Solution); //Si les parents sont le même individus on refait le choix
 
-				//Croisement pour créer les enfants
+				//Croisement pour créer les enfants, stockage des enfants dans newPopulation
 				Crossover(firstParent, secondParent, population, &newPopulation, problem);
 			}		
 
-			//mutation potentielle des enfants
-			newPopulation = Mutation(newPopulation, alpha, problem, populationMax);
+			//mutation potentielle des enfants selon la probabilité alpha
+			newPopulation = Mutation(newPopulation, alpha, problem, populationSize);
 
-			//selection nouvelle population
+			if (typePopulation.compare("memetique") == 0) {
+				newPopulation = Memetique(newPopulation, alphaMem, problem, populationSize, 1);
+			}
+
+			
 			totalInverseTardiness = GetInverseTotalTardinessPopulation(newPopulation);
-			population = NextGeneration(newPopulation, totalInverseTardiness, populationMax);
+			//Si un enfant trouve un optimum (fctObj == 0) alors on arrête l'algorithme, c'est une solution optimale
+			if (totalInverseTardiness == -1) { 
+				cout << "BREAK DEPUIS ENFANTS" << endl;
+				population = newPopulation;
+				bestSolution = GetBestSolution(population);
+				showLeS(&bestSolution);
+				break;
+			}
+
+			//selection proportionnelle de la nouvelle population
+			population = NextGeneration(newPopulation, totalInverseTardiness, populationSize);
 			generation++;
 			cout << "generation  : " << generation << endl;
-
-			/*cout << "================================================" << endl;
-			cout << "==== Meilleur individu GENERATION " << generation << " ====" << endl;
-			bestSolution = GetBestSolution(population);
-			showLeS(&bestSolution);*/
 		}
+
+		cout << "================================================" << endl;
+		cout << "==== Meilleur individu APRES algo genetique ====" << endl;
+		bestSolution = GetBestSolution(population); //Récupération du meilleur individus dans la population restante
+		showLeS(&bestSolution);
+		cout << "Timer = " << (double(clock()) - double(start)) / CLOCKS_PER_SEC << " secondes" << endl;
 		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
 	}
-	cout << "================================================" << endl;
-	cout << "==== Meilleur individu APRES algo genetique ====" << endl;
-	bestSolution = GetBestSolution(population);
-	showLeS(&bestSolution);
 }
 
 SMSSDTSolution GetBestSolution(deque<SMSSDTSolution>  population) {
@@ -84,6 +123,18 @@ deque<SMSSDTSolution> NextGeneration(deque<SMSSDTSolution> population, double to
 	}
 
 	return newPopulation;
+}
+
+deque<SMSSDTSolution> Memetique(deque<SMSSDTSolution> population, double alphaMem, SMSSDTProblem* problem, int maxPopulation, int shutoff) {
+	deque<SMSSDTSolution> temp = population;
+	for (int i = maxPopulation - 1; i < population.size(); i++) {
+		double rand = RandomValue(0, 1);
+		if (rand < alphaMem) {
+			LocalDescent(problem, &temp[i], shutoff);
+		}
+	}
+
+	return temp;
 }
 
 void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SMSSDTSolution> oldPopulation, deque<SMSSDTSolution> *newPopulation, SMSSDTProblem* problem)
@@ -158,6 +209,12 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 double GetInverseTotalTardinessPopulation(deque<SMSSDTSolution> population) {
 	double totalTardiness = 0;
 	for (int i = 0; i < population.size(); i++) {
+		if (population[i].getObj() == 0) {
+			cout << "mon objectif == 0" << endl;
+			showLeS(&population[i]);
+			totalTardiness = -1;
+			break;
+		}
 		totalTardiness += 1/population[i].getObj();
 	}
 
