@@ -13,4 +13,3 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 int CompareIndividuals(SMSSDTSolution s0, SMSSDTSolution s1);
 void SortPopulation(deque<SMSSDTSolution>* population);
 void ShowPlebe(deque<SMSSDTSolution>* population);
-void TestUtils(int iteration, SMSSDTProblem* problem, int shutoff, int fitness);
