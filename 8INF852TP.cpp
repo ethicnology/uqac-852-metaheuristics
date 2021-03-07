@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
 	else if (strcmp(algorithm, "SemiRandomGenetics") == 0) {
 		Genetics(iteration, problem, shutoff, fitness, "semiRandom");
 	} 
-	else if (strcmp(algorithm, "Memetique") == 0) {
+	else if (strcmp(algorithm, "Memetics") == 0) {
 		Genetics(iteration, problem, shutoff, fitness, "memetique");
 	}
 	else if (strcmp(algorithm, "TestUtils") == 0) {

@@ -2,7 +2,6 @@
 
 void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, string typePopulation) 
 {
-
 	/* Variables pour l'algorithme */
 	clock_t	start, current;				//Temps d'éxécutions d'une instance
 	
@@ -29,18 +28,10 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 
 	//Selon les paramètres d'entrées la population de base est complètement aléatoire ou semi aléatoire
 	if (typePopulation.compare("semiRandom") == 0 || typePopulation.compare("memetiqueSR") == 0) {
-		cout << "On passe SemiRandom" << endl;
 		population = InitializeSemiRandomPlebe(problem, populationSize);
-		cout << "On a fini SemiRandom" << endl;
 	} else {
-		cout << "On passe Random" << endl;
 		population = InitializeRandomPlebe(problem, populationSize);
 	}
-	
-	//Affichage de notre meilleur individu initiallement
-	cout << "==== Meilleur individu avant algo genetique ====" << endl;
-	bestSolution = GetBestSolution(population);
-	showLeS(&bestSolution);
 
 	//Une itération est une exécution complète de l'algorithme
 	for (int i = 0; i < iteration; i++) {
@@ -53,9 +44,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 
 			//Si -1 alors on a un individus optimal dans la population initiale, pas besoin d'exécuter l'algorithme
 			if (totalInverseTardiness == -1) {
-				cout << "BREAK DEPUIS POP INITIALE" << endl;
 				bestSolution = GetBestSolution(population);
-				showLeS(&bestSolution);
 				break;
 			}
 			
@@ -83,24 +72,18 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 			totalInverseTardiness = GetInverseTotalTardinessPopulation(newPopulation);
 			//Si un enfant trouve un optimum (fctObj == 0) alors on arrête l'algorithme, c'est une solution optimale
 			if (totalInverseTardiness == -1) { 
-				cout << "BREAK DEPUIS ENFANTS" << endl;
 				population = newPopulation;
 				bestSolution = GetBestSolution(population);
-				showLeS(&bestSolution);
 				break;
 			}
 
 			//selection proportionnelle de la nouvelle population
 			population = NextGeneration(newPopulation, totalInverseTardiness, populationSize);
 			generation++;
-			cout << "generation  : " << generation << endl;
 		}
 
-		cout << "================================================" << endl;
-		cout << "==== Meilleur individu APRES algo genetique ====" << endl;
 		bestSolution = GetBestSolution(population); //Récupération du meilleur individus dans la population restante
 		showLeS(&bestSolution);
-		cout << "Timer = " << (double(clock()) - double(start)) / CLOCKS_PER_SEC << " secondes" << endl;
 		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
 	}
 }
@@ -143,9 +126,6 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 	int maxCrossover = firstParent.Solution.size() - 3;
 	int randCrossoverPoint = (int) RandomValue(minCrossover, maxCrossover);
 
-	/*cout << endl << "firstParent.Solution.size() " << firstParent.Solution.size() << endl;
-	cout << "CrossOverPoint " << randCrossoverPoint << endl;*/
-
 	SMSSDTSolution firstChild = firstParent;
 	SMSSDTSolution secondChild = secondParent;
 
@@ -154,21 +134,6 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 	int k = 0;
 	do {
 		if (j == firstParent.Solution.size()) {
-			cout << "======= -------- ====="<< endl;
-			cout << "ERREUR CROISEMENT" << endl;
-			cout << "Valeur de j " << j << endl;
-			cout << "Valeur de i " << i << endl;
-			cout << "Valeur de k " << k << endl;
-			cout << "Crossover point " << randCrossoverPoint << endl;
-			/*showLeS(&firstParent);
-			showLeS(&secondParent);
-			cout << "=========================" << endl;
-
-			showLeS(&firstChild);
-			cout << "=========================" << endl;
-
-			showLeS(&secondChild);
-			cout << "=========================" << endl;*/
 			return;
 		} else { 
 			if (firstChild.notIn(secondParent.Solution[j], randCrossoverPoint, i) && i < randCrossoverPoint) {
@@ -185,20 +150,8 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 		j++;		
 	} while (i < randCrossoverPoint || k < randCrossoverPoint);
 
-
 	Tools::Evaluer(problem, firstChild);
 	Tools::Evaluer(problem, secondChild);
-	/*cout << " ================================== " << endl;
-	cout << "AFFICHAGE DU CROISEMENT WATCH OUT ! " << endl;
-	cout << " ================================== " << endl;
-	cout << " ======== Parent 1 ======== " << endl;
-	showLeS(&firstParent);
-	cout << " ======== Parent 2 ======== " << endl;
-	showLeS(&secondParent);
-	cout << " ======== Enfant 1 ======== " << endl;
-	showLeS(&firstChild);
-	cout << " ======== Enfant 2 ======== " << endl;
-	showLeS(&secondChild);*/
 
 	newPopulation->push_back(firstChild);
 	newPopulation->push_back(secondChild);
@@ -210,8 +163,6 @@ double GetInverseTotalTardinessPopulation(deque<SMSSDTSolution> population) {
 	double totalTardiness = 0;
 	for (int i = 0; i < population.size(); i++) {
 		if (population[i].getObj() == 0) {
-			cout << "mon objectif == 0" << endl;
-			showLeS(&population[i]);
 			totalTardiness = -1;
 			break;
 		}
