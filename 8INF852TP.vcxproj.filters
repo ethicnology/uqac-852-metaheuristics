@@ -82,5 +82,8 @@
     <None Include="README.md" />
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="datasets\Rendu2.bat">
+      <Filter>Fichiers sources</Filter>
+    </None>
   </ItemGroup>
 </Project>
