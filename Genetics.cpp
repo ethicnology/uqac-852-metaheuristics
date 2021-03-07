@@ -33,6 +33,9 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 	else if(typePopulation.compare("Random") == 0) {
 		population = InitializeRandomPlebe(problem, populationSize);
 	}
+	else if (typePopulation.compare("Memetics") == 0) {
+		population = InitializeRandomPlebe(problem, populationSize);
+	}
 	else {
 		cout << "Wrong values" << endl;
 		return;
