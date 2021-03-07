@@ -1,5 +1,6 @@
 #include "GeneticsUtils.h"
 
+/* Renvoie une population générée aléatoirement */
 deque<SMSSDTSolution> InitializeRandomPlebe(SMSSDTProblem* problem, int size) {
 	SMSSDTSolution* lambda = NULL;
 	deque<SMSSDTSolution> population(size);
@@ -11,19 +12,22 @@ deque<SMSSDTSolution> InitializeRandomPlebe(SMSSDTProblem* problem, int size) {
 	return population;
 }
 
-deque<SMSSDTSolution> InitializeSemiRandomPlebe(SMSSDTProblem *problem, int size) {
+/* Renvoie une population dont une moitié est générée aléatoirement, l'autre à subit une descente locale */
+deque<SMSSDTSolution> InitializeSemiRandomPlebe(SMSSDTProblem *problem, int size, int shutoff) {
 	deque<SMSSDTSolution> population;
 	population = InitializeRandomPlebe(problem, size);
 	/*SortPopulation(&population);*/
 	for (int i = 0; i < population.size()/2; i++) {
-		LocalDescent(problem, &population[i], 5);
+		LocalDescent(problem, &population[i], shutoff);
 	}
 	return population;
 }
-
-deque<SMSSDTSolution> MemeticsPlebe(deque<SMSSDTSolution> population, double alphaMem, SMSSDTProblem* problem, int maxPopulation, int shutoff) {
+ 
+/* Les enfants subissent une descente locale et on renvoie le résultat
+   Les enfants sont définis grâce à la taille de la population sans enfant*/
+deque<SMSSDTSolution> MemeticsPlebe(deque<SMSSDTSolution> population, double alphaMem, SMSSDTProblem* problem, int populationNoChildren, int shutoff) {
 	deque<SMSSDTSolution> temp = population;
-	for (int i = maxPopulation - 1; i < population.size(); i++) {
+	for (int i = populationNoChildren-1; i < population.size(); i++) {
 		double rand = RandomValue(0, 1);
 		if (rand < alphaMem) {
 			LocalDescent(problem, &temp[i], shutoff);
@@ -33,6 +37,8 @@ deque<SMSSDTSolution> MemeticsPlebe(deque<SMSSDTSolution> population, double alp
 	return temp;
 }
 
+/* La solution subit une descente locale 
+   shutoff est le critère d'arrêt de la descente locale (répétition sans amélioration de la solution) */
 void LocalDescent(SMSSDTProblem* problem, SMSSDTSolution* solution, int shutoff) {
 	int fitness = INT_MAX;
 	SMSSDTSolution	s0 = *solution;
@@ -49,6 +55,8 @@ void LocalDescent(SMSSDTProblem* problem, SMSSDTSolution* solution, int shutoff)
 	} while (stuck <= shutoff);
 }
 
+
+/* Renvoie le meilleur inidividu d'une solution */
 SMSSDTSolution GetBestSolution(deque<SMSSDTSolution>  population) {
 	SMSSDTSolution bestSolution = population[0];
 	for (int i = 1; i < population.size(); i++) {
@@ -60,6 +68,8 @@ SMSSDTSolution GetBestSolution(deque<SMSSDTSolution>  population) {
 	return bestSolution;
 }
 
+/* Renvoi un individu choisi sa fonction objective
+   Le choix est aléatoire mais un individu proposant une bonne solution à plus de chance d'être choisi */
 SMSSDTSolution GetIndividuProportionnelle(deque<SMSSDTSolution> population, double totalInverseTardiness) {
 	if (population.empty()) {
 		return NULL;
@@ -80,6 +90,7 @@ SMSSDTSolution GetIndividuProportionnelle(deque<SMSSDTSolution> population, doub
 	return individuChoisit;
 }
 
+/* Renvoie la selection de la nouvelle génération */
 deque<SMSSDTSolution> NextGeneration(deque<SMSSDTSolution> population, double totalInverseTardiness, int sizePopulation) {
 	deque<SMSSDTSolution> newPopulation;
 	for (int i = 0; i < sizePopulation; i++) {
@@ -89,9 +100,11 @@ deque<SMSSDTSolution> NextGeneration(deque<SMSSDTSolution> population, double to
 	return newPopulation;
 }
 
-deque<SMSSDTSolution> Mutation(deque<SMSSDTSolution> population, double alpha, SMSSDTProblem* problem, int maxPopulation) {
+/* Applique une mutation selon le paramètre alpha sur un enfant
+   Dans notre cas la mutation est un swap de deux taches */
+deque<SMSSDTSolution> Mutation(deque<SMSSDTSolution> population, double alpha, SMSSDTProblem* problem, int populationNoChildren) {
 	deque<SMSSDTSolution> temp = population;
-	for (int i = maxPopulation - 1; i < population.size(); i++) {
+	for (int i = populationNoChildren - 1; i < population.size(); i++) {
 		double rand = RandomValue(0, 1);
 		if (rand < alpha) {
 			temp[i] = Swap(temp[i], (int)RandomValue(0, temp[i].Solution.size() - 1), RandomValue(0, temp[i].Solution.size() - 1));
@@ -102,6 +115,8 @@ deque<SMSSDTSolution> Mutation(deque<SMSSDTSolution> population, double alpha, S
 	return temp;
 }
 
+/* renvoie l'inverse de lu retard total de la population (somme du de l'inverse du retard de chacun des individus)
+   On utilise l'inverse car on cherche à minimiser notre fonction objective */
 double GetInverseTotalTardinessPopulation(deque<SMSSDTSolution> population) {
 	double totalTardiness = 0;
 	for (int i = 0; i < population.size(); i++) {
@@ -115,6 +130,7 @@ double GetInverseTotalTardinessPopulation(deque<SMSSDTSolution> population) {
 	return totalTardiness;
 }
 
+/* Permet le croisement entre deux parent et permet la création de 2 enfants */
 void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SMSSDTSolution> oldPopulation, deque<SMSSDTSolution>* newPopulation, SMSSDTProblem* problem){
 	int minCrossover = 3;
 	int maxCrossover = firstParent.Solution.size() - 3;
@@ -152,14 +168,17 @@ void Crossover(SMSSDTSolution firstParent, SMSSDTSolution secondParent, deque<SM
 	newPopulation->push_back(secondChild);
 }
 
+/* Permet la comparaison de deux individus */
 int CompareIndividuals(SMSSDTSolution s0, SMSSDTSolution s1) {
 	return s0.getObj() < s1.getObj();
 }
 
+/* permet de trier la population */
 void SortPopulation(deque<SMSSDTSolution>* population) {
 	std::sort(population->begin(), population->end(), CompareIndividuals);
 }
 
+/* Permet l'affichage de la population */
 void ShowPlebe(deque<SMSSDTSolution>* population) {
 	for (auto it = population->begin(); it != population->end(); ++it) {
 		showLeS(&*it);

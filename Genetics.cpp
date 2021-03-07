@@ -12,13 +12,19 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 	SMSSDTSolution bestSolution = NULL; //Meilleur inidividu d'une population
 
 	int populationSize = 50;				//Taille de la population sur laquelle nous travaillons	
-	int nombreDeGeneration = 10;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
+	int nombreDeGeneration = 30;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
 	int generation = 0;						//Génération initiale
 
 	int numberChildren = 2*populationSize; //Nombre d'enfant à chaque génération
 	double alpha = 0.1;					   //Probabilité qu'un enfant subisse une mutation
 	double alphaMem = 1.0;			       //Probabilité de faire une descente locale sur un enfant dans algo mémétique
+		
+	double moyenne = 0;					   //Calcul la moyenne des fonctions objectives de toutes les itérations
+	double moyenneTemps = 0;			   //Calcul le temps moyen d'une exécutions de toutes les itérations
 	/* ================================ */
+
+	
+	
 
 	//L'algorithme nécessite une population d'au moins 2 individus
 	if (populationSize < 2) {
@@ -26,24 +32,25 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 		return;
 	}
 
-	//Selon les paramètres d'entrées la population de base est complètement aléatoire ou semi aléatoire
-	if (typePopulation.compare("SemiRandom") == 0) {
-		population = InitializeSemiRandomPlebe(problem, populationSize);
-	} 
-	else if(typePopulation.compare("Random") == 0) {
-		population = InitializeRandomPlebe(problem, populationSize);
-	}
-	else if (typePopulation.compare("Memetics") == 0) {
-		population = InitializeRandomPlebe(problem, populationSize);
-	}
-	else {
-		cout << "Wrong values" << endl;
-		return;
-	}
-
 	//Une itération est une exécution complète de l'algorithme
 	for (int i = 0; i < iteration; i++) {
 		start = clock(); //Démarage du chronomètre
+
+		//Selon les paramètres d'entrées la population de base est complètement aléatoire ou semi aléatoire
+		if (typePopulation.compare("SemiRandom") == 0) {
+			population = InitializeSemiRandomPlebe(problem, populationSize, 3);
+		}
+		else if (typePopulation.compare("Random") == 0) {
+			population = InitializeRandomPlebe(problem, populationSize);
+		}
+		else if (typePopulation.compare("Memetics") == 0) {
+			population = InitializeRandomPlebe(problem, populationSize);
+		}
+		else {
+			cout << "Wrong values" << endl;
+			return;
+		}
+		
 
 		//Tant que le critère d'arrêt n'est pas satisfait
 		while (generation < nombreDeGeneration) {
@@ -72,8 +79,9 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 			//mutation potentielle des enfants selon la probabilité alpha
 			newPopulation = Mutation(newPopulation, alpha, problem, populationSize);
 
+			//Si on exécute l'algo memetic alors les enfants subissent une descente locale
 			if (typePopulation.compare("Memetics") == 0) {
-				newPopulation = MemeticsPlebe(newPopulation, alphaMem, problem, populationSize, 1);
+				newPopulation = MemeticsPlebe(newPopulation, alphaMem, problem, populationSize, 3);
 			}
 
 			
@@ -90,8 +98,15 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 			generation++;
 		}
 
-		bestSolution = GetBestSolution(population); //Récupération du meilleur individus dans la population restante
-		showLeS(&bestSolution);
-		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
+		//Récupération du meilleur individu dans la population restante
+		bestSolution = GetBestSolution(population); 
+		moyenne += (double) bestSolution.getObj();
+		moyenneTemps += (double)((double)clock() - (double)start) / CLOCKS_PER_SEC;
+		generation = 0;
+		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());		
 	}
+
+
+	cout << "LA MOYENNE RESULTATANTE = " << moyenne / iteration << endl;
+	cout << "LA MOYENNE TEMP = " << moyenneTemps / iteration << endl;
 }
