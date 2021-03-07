@@ -136,6 +136,5 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 
 	moyenneSolution = moyenneSolution / iteration;
 	moyenneTemps = moyenneTemps / iteration;
-
-	/* TODO Appel ecriture dans un fichier*/
+	Tools::ResultsToCSV(typePopulation, problem->getNomFichier(),pireSolution,moyenneSolution,meilleureSolution,pireTemps,moyenneTemps,meilleurTemps);
 }

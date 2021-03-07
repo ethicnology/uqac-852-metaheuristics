@@ -115,16 +115,26 @@ class Tools
 
 			_strdate_s(Date, sizeof(Date));
 			_strtime_s(Time, sizeof(Date));
-			Streamf << Date << " " << Time << " ";
+			Streamf << Date << "," << Time << ",";
 
 			BestSolution.Save(Streamf);
-			Streamf << BestSolution.getObj() << " " << Elapsed << "\n";
+			Streamf << BestSolution.getObj() << "," << Elapsed << "\n";
 			Streamf.clear();
 			Streamf.close();
 			time_t rawtime;
 			time(&rawtime);
 		}
 
+		static void ResultsToCSV(string algorithm, char* ProblemName, int worstObj, double averageObj, int bestObj, double worstTime, double averageTime, double bestTime) {
+			std::string datasetName = string(ProblemName);
+			std::string delimiter = ".";
+			std::string datasetNumber = datasetName.substr(0, datasetName.find(delimiter));
+			string FileName = "Results/" + algorithm + ".csv";
+			fstream Streamf(FileName, ios::out | ios::app);
+			Streamf << datasetNumber << "," << worstObj << "," << averageObj << "," << bestObj << "," << worstTime << "," << averageTime << "," << bestTime << "\n";
+			Streamf.clear();
+			Streamf.close();
+		}
 };
 
 
