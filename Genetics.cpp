@@ -11,8 +11,8 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 	SMSSDTSolution secondParent = NULL; //Inidividu parent
 	SMSSDTSolution bestSolution = NULL; //Meilleur inidividu d'une population
 
-	int populationSize = 15;				//Taille de la population sur laquelle nous travaillons	
-	int nombreDeGeneration = 2;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
+	int populationSize = 50;				//Taille de la population sur laquelle nous travaillons	
+	int nombreDeGeneration = 30;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
 	int generation = 0;						//Génération initiale
 
 	int numberChildren = 2*populationSize; //Nombre d'enfant à chaque génération
