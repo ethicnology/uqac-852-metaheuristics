@@ -11,16 +11,22 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 	SMSSDTSolution secondParent = NULL; //Inidividu parent
 	SMSSDTSolution bestSolution = NULL; //Meilleur inidividu d'une population
 
-	int populationSize = 50;				//Taille de la population sur laquelle nous travaillons	
-	int nombreDeGeneration = 30;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
+	int populationSize = 15;				//Taille de la population sur laquelle nous travaillons	
+	int nombreDeGeneration = 2;			//Nombre de génération pour lequel notre algorithme va s'exécuter (CRITERE D'ARRÊT)
 	int generation = 0;						//Génération initiale
 
 	int numberChildren = 2*populationSize; //Nombre d'enfant à chaque génération
 	double alpha = 0.1;					   //Probabilité qu'un enfant subisse une mutation
 	double alphaMem = 1.0;			       //Probabilité de faire une descente locale sur un enfant dans algo mémétique
 		
-	double moyenne = 0;					   //Calcul la moyenne des fonctions objectives de toutes les itérations
-	double moyenneTemps = 0;			   //Calcul le temps moyen d'une exécutions de toutes les itérations
+	
+	double moyenneSolution = 0;					   //Calcul la moyenne des fonctions objectives de toutes les itérations	
+	int meilleureSolution = INT_MAX;
+	int pireSolution = INT_MIN;
+
+	double moyenneTemps = 0;			   //Calcul le temps moyen d'une exécutions de toutes les itérations3
+	double meilleurTemps = INT_MAX;
+	double pireTemps = INT_MIN;
 	/* ================================ */
 
 	
@@ -28,7 +34,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 
 	//L'algorithme nécessite une population d'au moins 2 individus
 	if (populationSize < 2) {
-		cout << "Erreur population trop petite";
+		std::cout << "Erreur population trop petite"<< endl;
 		return;
 	}
 
@@ -47,7 +53,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 			population = InitializeRandomPlebe(problem, populationSize);
 		}
 		else {
-			cout << "Wrong values" << endl;
+			std::cout << "Wrong values" << endl;
 			return;
 		}
 		
@@ -100,13 +106,36 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 
 		//Récupération du meilleur individu dans la population restante
 		bestSolution = GetBestSolution(population); 
-		moyenne += (double) bestSolution.getObj();
-		moyenneTemps += (double)((double)clock() - (double)start) / CLOCKS_PER_SEC;
+
+		/* Calcul des meilleurs, moyennes et pires solutions*/
+		double currentTimer = (double)((double)clock() - (double)start) / CLOCKS_PER_SEC;
+		moyenneSolution += (double) bestSolution.getObj();		
+		moyenneTemps += currentTimer;
+
+		if (bestSolution.getObj() < meilleureSolution) {
+			meilleureSolution = bestSolution.getObj();
+		}
+		
+		if (bestSolution.getObj() > pireSolution) {
+			pireSolution = bestSolution.getObj();
+		}
+
+		if (currentTimer < meilleurTemps) {
+			meilleurTemps = currentTimer;
+		}
+
+		if (currentTimer > pireTemps) {
+			pireTemps = currentTimer;
+		}
+
+
+
+		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
 		generation = 0;
-		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());		
 	}
 
+	moyenneSolution = moyenneSolution / iteration;
+	moyenneTemps = moyenneTemps / iteration;
 
-	cout << "LA MOYENNE RESULTATANTE = " << moyenne / iteration << endl;
-	cout << "LA MOYENNE TEMP = " << moyenneTemps / iteration << endl;
+	/* TODO Appel ecriture dans un fichier*/
 }
