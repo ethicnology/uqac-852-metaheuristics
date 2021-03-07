@@ -35,16 +35,13 @@ int main(int argc, char* argv[]){
 		Descentelocale(iteration, problem, shutoff, fitness);
 	}
 	else if (strcmp(algorithm, "RandomGenetics") == 0) {
-		Genetics(iteration, problem, shutoff, fitness, "random");
+		Genetics(iteration, problem, shutoff, fitness, "Random");
 	} 
 	else if (strcmp(algorithm, "SemiRandomGenetics") == 0) {
-		Genetics(iteration, problem, shutoff, fitness, "semiRandom");
+		Genetics(iteration, problem, shutoff, fitness, "SemiRandom");
 	} 
 	else if (strcmp(algorithm, "Memetics") == 0) {
-		Genetics(iteration, problem, shutoff, fitness, "memetique");
-	}
-	else if (strcmp(algorithm, "TestUtils") == 0) {
-		TestUtils(iteration, problem, shutoff, fitness);
+		Genetics(iteration, problem, shutoff, fitness, "Memetics");
 	}
 	else {
 		cout << "Unknown algorithm" << endl;

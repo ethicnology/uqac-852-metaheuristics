@@ -3,7 +3,7 @@
 void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, string typePopulation) 
 {
 	/* Variables pour l'algorithme */
-	clock_t	start, current;				//Temps d'éxécutions d'une instance
+	clock_t	start;				//Temps d'éxécutions d'une instance
 	
 
 	deque<SMSSDTSolution> population;	//Notre population
@@ -27,10 +27,15 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 	}
 
 	//Selon les paramètres d'entrées la population de base est complètement aléatoire ou semi aléatoire
-	if (typePopulation.compare("semiRandom") == 0 || typePopulation.compare("memetiqueSR") == 0) {
+	if (typePopulation.compare("SemiRandom") == 0) {
 		population = InitializeSemiRandomPlebe(problem, populationSize);
-	} else {
+	} 
+	else if(typePopulation.compare("Random") == 0) {
 		population = InitializeRandomPlebe(problem, populationSize);
+	}
+	else {
+		cout << "Wrong values" << endl;
+		return;
 	}
 
 	//Une itération est une exécution complète de l'algorithme
@@ -64,7 +69,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 			//mutation potentielle des enfants selon la probabilité alpha
 			newPopulation = Mutation(newPopulation, alpha, problem, populationSize);
 
-			if (typePopulation.compare("memetique") == 0) {
+			if (typePopulation.compare("Memetics") == 0) {
 				newPopulation = MemeticsPlebe(newPopulation, alphaMem, problem, populationSize, 1);
 			}
 

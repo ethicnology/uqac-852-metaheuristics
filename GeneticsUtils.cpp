@@ -165,9 +165,3 @@ void ShowPlebe(deque<SMSSDTSolution>* population) {
 		showLeS(&*it);
 	}
 }
-
-void TestUtils(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) {
-	deque<SMSSDTSolution> population;
-	population = InitializeSemiRandomPlebe(problem, 10);
-	ShowPlebe(&population);
-}
