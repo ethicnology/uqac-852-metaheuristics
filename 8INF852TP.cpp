@@ -16,11 +16,13 @@ int main(int argc, char* argv[]){
 		srand((int)time(NULL));
 	}
 
-	int iteration = atoi(argv[1]), shutoff = 15, fitness = INT_MAX;
+	int iteration = atoi(argv[1]), fitness = INT_MAX;
 	char *dataset = argv[2], *algorithm = argv[3];
 
 	SMSSDTProblem* problem;
 	problem = new SMSSDTProblem(dataset);
+
+	int shutoff = 1 * problem->getN();
 
 	if (strcmp(algorithm, "VNS") == 0) {
 		VNS(iteration, problem, shutoff, fitness);

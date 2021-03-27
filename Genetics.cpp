@@ -59,7 +59,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 		
 
 		//Tant que le critère d'arrêt n'est pas satisfait
-		while (generation < nombreDeGeneration) {
+		do {
 			//Récupération de l'inverse de l'ensemble des fonctions objectives de la population
 			double totalInverseTardiness = GetInverseTotalTardinessPopulation(population); //Renvois -1 si un individus == 0;
 
@@ -102,7 +102,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 			//selection proportionnelle de la nouvelle population
 			population = NextGeneration(newPopulation, totalInverseTardiness, populationSize);
 			generation++;
-		}
+		} while (((double(clock()) - double(start)) / CLOCKS_PER_SEC) < shutoff);
 
 		//Récupération du meilleur individu dans la population restante
 		bestSolution = GetBestSolution(population); 
@@ -129,7 +129,7 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 		}
 
 
-
+		showLeS(&bestSolution);
 		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
 		generation = 0;
 	}
