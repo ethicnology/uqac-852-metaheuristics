@@ -17,6 +17,11 @@ void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness)
 	tabuList.resize(tabuSizeMax);
 	solution = new SMSSDTSolution(problem->getN(), true);
 
+	/* On-The-Fly variables */
+	std::string algoName = "TabuSearch";
+	double avgSol = 0, wstTime = INT_MIN, avgTime = 0, bstTime = INT_MAX;	
+	int bstSol = INT_MAX, wstSol = INT_MIN;
+
 	for (int j = 0; j < iteration; j++) {
 		start = clock();
 		SMSSDTSolution bestSolution(problem->getN());
@@ -39,5 +44,25 @@ void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness)
 		StopAndLog(start, clock(), bestSolution, problem->getNomFichier());
 		showLeS(&bestSolution);
 		fitness = INT_MAX;
+
+		/* Compute results On-The-Fly */
+		double currentTimer = (double)((double)clock() - (double)start) / CLOCKS_PER_SEC;
+		avgSol += (double)bestSolution.getObj();
+		avgTime += currentTimer;
+		if (bestSolution.getObj() < bstSol) {
+			bstSol = bestSolution.getObj();
+		}
+		if (bestSolution.getObj() > wstSol) {
+			wstSol = bestSolution.getObj();
+		}
+		if (currentTimer < bstTime) {
+			bstTime = currentTimer;
+		}
+		if (currentTimer > wstTime) {
+			wstTime = currentTimer;
+		}
 	}
+	avgSol = avgSol / iteration;
+	avgTime = avgTime / iteration;
+	Tools::ResultsToCSV(algoName, problem->getNomFichier(), wstSol, avgSol, bstSol, wstTime, avgTime, bstTime);
 }

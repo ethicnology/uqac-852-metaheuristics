@@ -10,6 +10,11 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 	int k = 1;
 	double condition = 1;
 
+	/* On-The-Fly variables */
+	std::string algoName = "SimulatedAnnealing";
+	double avgSol = 0, wstTime = INT_MIN, avgTime = 0, bstTime = INT_MAX;
+	int bstSol = INT_MAX, wstSol = INT_MIN;
+
 	for (int j = 0; j < iteration; j++) {
 		Start = clock();
 		Current = clock();
@@ -38,7 +43,27 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 		StopAndLog(Start, clock(), BestSolution, leProb->getNomFichier());
 		showLeS(&BestSolution);
 		fitness = INT_MAX;
+
+		/* Compute results On-The-Fly */
+		double currentTimer = (double)((double)clock() - (double)Start) / CLOCKS_PER_SEC;
+		avgSol += (double)BestSolution.getObj();
+		avgTime += currentTimer;
+		if (BestSolution.getObj() < bstSol) {
+			bstSol = BestSolution.getObj();
+		}
+		if (BestSolution.getObj() > wstSol) {
+			wstSol = BestSolution.getObj();
+		}
+		if (currentTimer < bstTime) {
+			bstTime = currentTimer;
+		}
+		if (currentTimer > wstTime) {
+			wstTime = currentTimer;
+		}
 	}
+	avgSol = avgSol / iteration;
+	avgTime = avgTime / iteration;
+	Tools::ResultsToCSV(algoName, leProb->getNomFichier(), wstSol, avgSol, bstSol, wstTime, avgTime, bstTime);
 }
 
 double p(double Tk, double solutionCourante, double solutionVoisine)
