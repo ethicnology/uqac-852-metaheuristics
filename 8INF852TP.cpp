@@ -4,6 +4,7 @@
 #include "RecuitSimule.h"
 #include "Genetics.h"
 #include "GeneticsUtils.h"
+#include "AntColony.h"
 
 int main(int argc, char* argv[]){
 	if (argc != 4) {
@@ -44,6 +45,9 @@ int main(int argc, char* argv[]){
 	} 
 	else if (strcmp(algorithm, "Memetics") == 0) {
 		Genetics(iteration, problem, shutoff, fitness, "Memetics");
+	}
+	else if (strcmp(algorithm, "AntColony") == 0) {
+		AntColony(iteration, problem, shutoff, fitness);
 	}
 	else {
 		cout << "Unknown algorithm" << endl;

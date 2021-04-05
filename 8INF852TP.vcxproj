@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="8INF852TP.cpp" />
+    <ClCompile Include="AntColony.cpp" />
     <ClCompile Include="DescenteLocale.cpp" />
     <ClCompile Include="GeneticsUtils.cpp" />
     <ClCompile Include="Genetics.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="VNS.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AntColony.h" />
     <ClInclude Include="DescenteLocale.h" />
     <ClInclude Include="GeneticsUtils.h" />
     <ClInclude Include="Genetics.h" />
