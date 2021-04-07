@@ -169,6 +169,7 @@
     <None Include=".gitignore" />
     <None Include="datasets\Rendu2.bat" />
     <None Include="README.md" />
+    <None Include="Rendu3.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

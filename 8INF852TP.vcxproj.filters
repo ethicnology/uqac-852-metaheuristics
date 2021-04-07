@@ -91,5 +91,8 @@
     <None Include="datasets\Rendu2.bat">
       <Filter>Fichiers sources</Filter>
     </None>
+    <None Include="Rendu3.bat">
+      <Filter>Fichiers sources</Filter>
+    </None>
   </ItemGroup>
 </Project>
