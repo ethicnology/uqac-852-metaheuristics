@@ -41,8 +41,8 @@ void Evaporate(double** pheromone, int size, double rho) {
 	for (int i = 0; i < size; ++i){
 		for (int j = 0; j < size; ++j){
 			int val = (1.0 - rho) * pheromone[i][j];
-			if (val < 0.0001){
-				val = 0.0001;
+			if (val < 0.01){
+				val = 0.01;
 			}
 			pheromone[i][j] = val;
 		}
@@ -52,7 +52,6 @@ void Evaporate(double** pheromone, int size, double rho) {
 void Init(double** pheromone, int size) {
 	for (int i = 0; i < size; ++i) {
 		for (int j = 0; j < size; ++j) {
-			//int x = RandomValue(0, 10);
 			pheromone[i][j] = 10;
 		}
 	}
@@ -69,7 +68,7 @@ vector<double> ComputeProbs(vector<double> taueta) {
 	return probs;
 }
 
-int SelectPath(vector<double> probs) {
+int ProportionalSelect(vector<double> probs) {
 	double R = ((double)rand() / (RAND_MAX));
 	double sum = 0;
 	for (int i = 0; i < probs.size(); i++) {
@@ -80,12 +79,12 @@ int SelectPath(vector<double> probs) {
 	}
 }
 
-double ComputeTaueta(double pheromone, double alpha, double distance, double beta, int n) {
+double EvaluatePath(double pheromone, double alpha, double distance, double beta, int n) {
 	/* Avoid divide by zero */
 	if (distance == 0) distance = 1;
 	double result = pow(pheromone, alpha) * pow((1.0 / distance), beta);
-	if (result < 0.0001) {
-		result = 0.0001;
+	if (result < 0.01) {
+		result = 0.01;
 	} else if(result > (DBL_MAX / (n*100.0))){
 		result = DBL_MAX / (n * 100.0);
 	}
@@ -102,7 +101,7 @@ void AntColony(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 	clock_t	start, current;
 	SMSSDTSolution* solution = NULL, alternative = NULL;
 	int n = problem->getN();
-	double const alpha = 3.0, beta = 2.0, rho = 0.00001, Q = 2.0;
+	double const alpha = 3.0, beta = 2.0, rho = 0.01, Q = 2.0;
 
 	/* Setup Matrix represents distances in Ant Colony context */
 	vector<std::vector<int>> distances = problem->getS();
@@ -113,52 +112,39 @@ void AntColony(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 	for (int i = 0; i < rows; ++i)
 		pheromones[i] = new double[cols];
 
-
-	/* Local descent on random solution */
-	//LocalDescent(problem, solution, 100);
-	//Tools::Evaluer(problem, *solution);
-	//showLeS(solution);
-
 	for (int j = 0; j < iteration; j++) {
 		/* Init clock and empty solution */
 		start = clock();
 		SMSSDTSolution bestSolution(problem->getN());
 		vector<int>::iterator it;
 
-		cout << "################START################" << endl;
 		/* Pick a random solution */
 		solution = new SMSSDTSolution(problem->getN(), true);
 		Tools::Evaluer(problem, *solution);
-		showLeS(solution);
 
 		Init(pheromones, n);
-		//ShowPheromones(pheromones, n);
-		//showLeS(solution);
-		//ShowDistances(distances, n);
 		do {
 			for (int i = 0; i < n-3; i++) {
 				vector<double> taueta(n, 0.0);
 				for (int j = i + 1; j < n - 1; j++) {
 					double attractivity = pheromones[solution->Solution[i]][solution->Solution[j]];
 					double visibility = distances[solution->Solution[i]][solution->Solution[j]];
-					taueta[solution->Solution[j]] = ComputeTaueta(attractivity, alpha, visibility, beta, n);
+					taueta[solution->Solution[j]] = EvaluatePath(attractivity, alpha, visibility, beta, n);
 					//cout << "FROM " << solution->Solution[i] << " TO-> " << solution->Solution[j] << " | PHER " << attractivity << " | DIST " << visibility << " | TAUETA " << taueta[solution->Solution[j]] << endl;
 				}
 				vector<double> probs = ComputeProbs(taueta);
-				int selected = SelectPath(probs);
+				int selected = ProportionalSelect(probs);
 				it = find(solution->Solution.begin(), solution->Solution.end(), selected);
 				if (it != solution->Solution.end()){
 					//std::cout << "Selected " << selected << " found at position : " << it - solution->Solution.begin() << endl;
 					swap(solution->Solution[j], solution->Solution[it - solution->Solution.begin()]);
 				}
 			}
-			/* local descent after each ant trip ? */
-			//LocalDescent(problem, solution, 100);
+			/* Local descent after each ant trip */
+			LocalDescent(problem, solution, 100);
 			Tools::Evaluer(problem, *solution);
-			//showLeS(solution);
 			Evaporate(pheromones, n, rho);
 			Trace(pheromones, solution, Q, solution->getObj());
-			//ShowPheromones(pheromones, n);
 			if (solution->getObj() < fitness) {
 				bestSolution = *solution;
 				fitness = (int)bestSolution.getObj();
