@@ -12,7 +12,7 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 
 	/* On-The-Fly variables */
 	std::string algoName = "SimulatedAnnealing";
-	double avgSol = 0, wstTime = INT_MIN, avgTime = 0, bstTime = INT_MAX;
+	double avgSol = 0, wstTime = DBL_MIN, avgTime = 0, bstTime = DBL_MAX;
 	int bstSol = INT_MAX, wstSol = INT_MIN;
 
 	for (int j = 0; j < iteration; j++) {
@@ -27,7 +27,7 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 
 			if (r < p(Tk, (double) fitness, (double) shaked.getObj())) {
 				BestSolution = shaked;
-				fitness = BestSolution.getObj();
+				fitness = (int)BestSolution.getObj();
 			}
 
 			if (k >= 5000 && k >= condition) {
@@ -49,10 +49,10 @@ void RecuitSimule(int iteration, SMSSDTProblem* leProb, int critereArret, int fi
 		avgSol += (double)BestSolution.getObj();
 		avgTime += currentTimer;
 		if (BestSolution.getObj() < bstSol) {
-			bstSol = BestSolution.getObj();
+			bstSol = (int)BestSolution.getObj();
 		}
 		if (BestSolution.getObj() > wstSol) {
-			wstSol = BestSolution.getObj();
+			wstSol = (int)BestSolution.getObj();
 		}
 		if (currentTimer < bstTime) {
 			bstTime = currentTimer;

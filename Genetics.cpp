@@ -25,8 +25,8 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 	int pireSolution = INT_MIN;
 
 	double moyenneTemps = 0;			   //Calcul le temps moyen d'une exécutions de toutes les itérations3
-	double meilleurTemps = INT_MAX;
-	double pireTemps = INT_MIN;
+	double meilleurTemps = DBL_MAX;
+	double pireTemps = DBL_MIN;
 	/* ================================ */
 
 	
@@ -113,11 +113,11 @@ void Genetics(int iteration, SMSSDTProblem* problem, int shutoff, int fitness, s
 		moyenneTemps += currentTimer;
 
 		if (bestSolution.getObj() < meilleureSolution) {
-			meilleureSolution = bestSolution.getObj();
+			meilleureSolution = (int)bestSolution.getObj();
 		}
 		
 		if (bestSolution.getObj() > pireSolution) {
-			pireSolution = bestSolution.getObj();
+			pireSolution = (int)bestSolution.getObj();
 		}
 
 		if (currentTimer < meilleurTemps) {

@@ -19,7 +19,7 @@ void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness)
 
 	/* On-The-Fly variables */
 	std::string algoName = "TabuSearch";
-	double avgSol = 0, wstTime = INT_MIN, avgTime = 0, bstTime = INT_MAX;	
+	double avgSol = 0, wstTime = DBL_MIN, avgTime = 0, bstTime = DBL_MAX;	
 	int bstSol = INT_MAX, wstSol = INT_MIN;
 
 	for (int j = 0; j < iteration; j++) {
@@ -50,10 +50,10 @@ void TabuSearch(int iteration, SMSSDTProblem *problem, int shutoff, int fitness)
 		avgSol += (double)bestSolution.getObj();
 		avgTime += currentTimer;
 		if (bestSolution.getObj() < bstSol) {
-			bstSol = bestSolution.getObj();
+			bstSol = (int)bestSolution.getObj();
 		}
 		if (bestSolution.getObj() > wstSol) {
-			wstSol = bestSolution.getObj();
+			wstSol = (int)bestSolution.getObj();
 		}
 		if (currentTimer < bstTime) {
 			bstTime = currentTimer;

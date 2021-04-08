@@ -30,7 +30,7 @@ void Trace(double** pheromone, SMSSDTSolution *s, double Q, double length) {
 	if (val > 100000.0) {
 		val = 100000.0;
 	}
-	for (int i = 0; i < s->Solution.size()-1; i++) {
+	for (size_t i = 0; i < s->Solution.size()-1; i++) {
 		int from = s->Solution[i], to = s->Solution[i + 1];
 		pheromone[from][to] = val;
 		pheromone[to][from] = val;
@@ -40,7 +40,7 @@ void Trace(double** pheromone, SMSSDTSolution *s, double Q, double length) {
 void Evaporate(double** pheromone, int size, double rho) {
 	for (int i = 0; i < size; ++i){
 		for (int j = 0; j < size; ++j){
-			int val = (1.0 - rho) * pheromone[i][j];
+			double val = (1.0 - rho) * pheromone[i][j];
 			if (val < 0.01){
 				val = 0.01;
 			}
@@ -61,7 +61,7 @@ vector<double> ComputeProbs(vector<double> taueta) {
 	vector<double> probs(taueta.size(), 0.0);
 	double sum = std::accumulate(taueta.begin(), taueta.end(), 0.0);
 	//cout << "PROBS SIZE " << probs.size() << " | SUM " << sum << endl;
-	for (int i = 0; i < taueta.size(); i++) {
+	for (size_t i = 0; i < taueta.size(); i++) {
 		probs[i] = taueta[i] / sum;
 		//cout << "PROB  : " << probs[i] << " TAUETA "<< taueta[i]<< endl;
 	}
@@ -71,12 +71,13 @@ vector<double> ComputeProbs(vector<double> taueta) {
 int ProportionalSelect(vector<double> probs) {
 	double R = ((double)rand() / (RAND_MAX));
 	double sum = 0;
-	for (int i = 0; i < probs.size(); i++) {
+	for (size_t i = 0; i < probs.size(); i++) {
 		sum += probs[i];
 		if (R < sum) {
 			return i;
 		}
 	}
+	return -1;
 }
 
 double EvaluatePath(double pheromone, double alpha, double distance, double beta, int n) {
@@ -94,7 +95,7 @@ double EvaluatePath(double pheromone, double alpha, double distance, double beta
 void AntColony(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) {
 	/* On-The-Fly variables */
 	string algoName = "AntColony";
-	double avgSol = 0, wstTime = INT_MIN, avgTime = 0, bstTime = INT_MAX;
+	double avgSol = 0, wstTime = DBL_MIN, avgTime = 0, bstTime = DBL_MAX;
 	int bstSol = INT_MAX, wstSol = INT_MIN;
 
 	/* Common variables*/
@@ -121,12 +122,11 @@ void AntColony(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 		/* Pick a random solution */
 		solution = new SMSSDTSolution(problem->getN(), true);
 		Tools::Evaluer(problem, *solution);
-
 		Init(pheromones, n);
 		do {
-			for (int i = 0; i < n-3; i++) {
+			for (size_t i = 0; i < solution->Solution.size()-3; i++) {
 				vector<double> taueta(n, 0.0);
-				for (int j = i + 1; j < n - 1; j++) {
+				for (size_t j = i + 1; j < solution->Solution.size() - 1; j++) {
 					double attractivity = pheromones[solution->Solution[i]][solution->Solution[j]];
 					double visibility = distances[solution->Solution[i]][solution->Solution[j]];
 					taueta[solution->Solution[j]] = EvaluatePath(attractivity, alpha, visibility, beta, n);
@@ -134,10 +134,12 @@ void AntColony(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 				}
 				vector<double> probs = ComputeProbs(taueta);
 				int selected = ProportionalSelect(probs);
-				it = find(solution->Solution.begin(), solution->Solution.end(), selected);
-				if (it != solution->Solution.end()){
-					//std::cout << "Selected " << selected << " found at position : " << it - solution->Solution.begin() << endl;
-					swap(solution->Solution[j], solution->Solution[it - solution->Solution.begin()]);
+				if (selected != -1) {
+					it = find(solution->Solution.begin(), solution->Solution.end(), selected);
+					if (it != solution->Solution.end()) {
+						//std::cout << "Selected " << selected << " found at position : " << it - solution->Solution.begin() << endl;
+						swap(solution->Solution[i + 1], solution->Solution[it - solution->Solution.begin()]);
+					}
 				}
 			}
 			/* Local descent after each ant trip */
@@ -160,10 +162,10 @@ void AntColony(int iteration, SMSSDTProblem* problem, int shutoff, int fitness) 
 		avgSol += (double)bestSolution.getObj();
 		avgTime += currentTimer;
 		if (bestSolution.getObj() < bstSol) {
-			bstSol = bestSolution.getObj();
+			bstSol = (int)bestSolution.getObj();
 		}
 		if (bestSolution.getObj() > wstSol) {
-			wstSol = bestSolution.getObj();
+			wstSol = (int)bestSolution.getObj();
 		}
 		if (currentTimer < bstTime) {
 			bstTime = currentTimer;

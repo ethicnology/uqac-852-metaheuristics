@@ -7,7 +7,7 @@ void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int 
 
 	/* On-The-Fly variables */
 	std::string algoName = "LocalDescent";
-	double avgSol = 0, wstTime = INT_MIN, avgTime = 0, bstTime = INT_MAX;
+	double avgSol = 0, wstTime = DBL_MIN, avgTime = 0, bstTime = DBL_MAX;
 	int bstSol = INT_MAX, wstSol = INT_MIN;
 
 	for (int j = 0; j < iteration; j++){
@@ -19,7 +19,7 @@ void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int 
 			Tools::Evaluer(leProb, *Solution);
 			if (Solution->getObj() < fitness) {
 				BestSolution = *Solution;
-				fitness = BestSolution.getObj();
+				fitness = (int)BestSolution.getObj();
 			}
 			Current = clock();
 		} while (((double(Current) - double(Start)) / CLOCKS_PER_SEC) < critereArret);
@@ -33,10 +33,10 @@ void Descentelocale(int iteration, SMSSDTProblem* leProb, int critereArret, int 
 		avgSol += (double)BestSolution.getObj();
 		avgTime += currentTimer;
 		if (BestSolution.getObj() < bstSol) {
-			bstSol = BestSolution.getObj();
+			bstSol = (int)BestSolution.getObj();
 		}
 		if (BestSolution.getObj() > wstSol) {
-			wstSol = BestSolution.getObj();
+			wstSol = (int)BestSolution.getObj();
 		}
 		if (currentTimer < bstTime) {
 			bstTime = currentTimer;
